@@ -4,16 +4,15 @@ Automated high-frequency market data recorder powered by Kotak Neo API.
 
 ## Tracked Instruments
 
-### 1. NSE Equity Index Derivatives
-- **NIFTY 50**: Spot Index & Current-Month Futures (`NIFTY26SEPFUT`)
-- **BANK NIFTY**: Spot Index & Current-Month Futures (`BANKNIFTY26SEPFUT`)
-- **FIN NIFTY**: Spot Index & Current-Month Futures (`FINNIFTY26SEPFUT`)
+### 1. Equity Index Derivatives (NSE & BSE)
+- **NIFTY 50**: Spot Index, Current-Month Futures (`NIFTY26SEPFUT`) & ATM Options (CE/PE)
+- **SENSEX**: Spot Index, Current-Month Futures (`SENSEX26SEPFUT`) & ATM Options (CE/PE) on BSE FO
 
 ### 2. MCX Commodity Derivatives
-- **CRUDE OIL**: Current-Month 100-BBL Futures (`CRUDEOIL21SEP26FUT`)
-- **CRUDE OIL MINI**: Current-Month 10-BBL Futures (`CRUDEOILM21SEP26FUT`)
-- **NATURAL GAS**: Current-Month 1250-mmBtu Futures (`NATURALGAS25SEP26FUT`)
-- **NATURAL GAS MINI**: Current-Month 250-mmBtu Futures (`NATGASMINI25SEP26FUT`)
+- **CRUDE OIL**: Current-Month 100-BBL Futures (`CRUDEOIL21SEP26FUT`) & ATM Options
+- **CRUDE OIL MINI**: Current-Month 10-BBL Futures (`CRUDEOILM21SEP26FUT`) & ATM Options
+- **NATURAL GAS**: Current-Month 1250-mmBtu Futures (`NATURALGAS25SEP26FUT`) & ATM Options
+- **NATURAL GAS MINI**: Current-Month 250-mmBtu Futures (`NATGASMINI25SEP26FUT`) & ATM Options
 
 ---
 
