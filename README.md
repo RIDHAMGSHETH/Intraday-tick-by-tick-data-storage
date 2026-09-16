@@ -19,9 +19,30 @@ Automated high-frequency market data recorder powered by Kotak Neo API.
 ## Directory Structure
 ```
 data/
-└── YYYY-MM-DD/
-    ├── all_assets_ticks_YYYY-MM-DD.csv      # Tick-by-tick aggressor & level 1 depth
-    └── all_assets_1min_bars_YYYY-MM-DD.csv   # Aggregated 1-minute OHLCV bars
+├── nifty/
+│   └── YYYY-MM-DD/
+│       ├── nifty_ticks_YYYY-MM-DD.csv       # Ticks with 5-depth (Parquet on Hugging Face)
+│       ├── nifty_tape_YYYY-MM-DD.csv        # Aggressor trade tape
+│       └── nifty_1min_bars_YYYY-MM-DD.csv   # 1-minute OHLCV bars
+├── sensex/
+│   └── YYYY-MM-DD/
+│       ├── sensex_ticks_YYYY-MM-DD.csv
+│       ├── sensex_tape_YYYY-MM-DD.csv
+│       └── sensex_1min_bars_YYYY-MM-DD.csv
+├── crudeoil/
+│   └── YYYY-MM-DD/
+│       ├── crudeoil_ticks_YYYY-MM-DD.csv
+│       ├── crudeoil_tape_YYYY-MM-DD.csv
+│       └── crudeoil_1min_bars_YYYY-MM-DD.csv
+├── naturalgas/
+│   └── YYYY-MM-DD/
+│       ├── naturalgas_ticks_YYYY-MM-DD.csv
+│       ├── naturalgas_tape_YYYY-MM-DD.csv
+│       └── naturalgas_1min_bars_YYYY-MM-DD.csv
+└── old_data/                                # Historical legacy recordings
+    ├── 2026-09-13/
+    ├── 2026-09-14/
+    └── 2026-09-15/
 ```
 
 ## Data Schema (Tick-by-Tick)
