@@ -22,12 +22,12 @@ DATA_ROOT = os.path.join(REPO_ROOT, "data")
 if ENGINE_DIR not in sys.path:
     sys.path.insert(0, ENGINE_DIR)
 
-from trading_calendar import get_market_status
+from trading_calendar import get_market_status, get_ist_now
 from universal_recorder import UniversalRecorder, PRIMARY_ASSETS
 from hf_dataset_uploader import convert_and_upload_file
 
 def run_session(session_type="morning", max_minutes=370):
-    now = datetime.now()
+    now = get_ist_now()
     status = get_market_status(now)
     date_str = now.strftime("%Y-%m-%d")
 

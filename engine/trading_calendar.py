@@ -41,25 +41,26 @@ HOLIDAYS_2026 = {
     "2026-12-25": {"name": "Christmas", "nse_closed": True, "mcx_morning_closed": True, "mcx_evening_open": False},
 }
 
+from datetime import datetime, date, time as dtime, timezone, timedelta
+
+IST_TZ = timezone(timedelta(hours=5, minutes=30))
+
+def get_ist_now():
+    """Always returns the current datetime in Indian Standard Time (UTC+5:30)."""
+    return datetime.now(timezone.utc).astimezone(IST_TZ).replace(tzinfo=None)
+
 def is_weekend(dt=None):
     """Returns True if Saturday (5) or Sunday (6)."""
     if dt is None:
-        dt = datetime.now()
+        dt = get_ist_now()
     return dt.weekday() in (5, 6)
 
 def get_market_status(dt=None):
     """
-    Returns the market trading state for both NSE and MCX at given timestamp.
-    Returns:
-      {
-         'is_trading_day': bool,
-         'nse_open': bool,
-         'mcx_open': bool,
-         'reason': str
-      }
+    Returns the market trading state for both NSE and MCX at given timestamp in IST.
     """
     if dt is None:
-        dt = datetime.now()
+        dt = get_ist_now()
 
     date_str = dt.strftime("%Y-%m-%d")
     cur_time = dt.time()

@@ -36,7 +36,7 @@ if ENGINE_DIR not in sys.path:
 from kotak_neo_session import get_kotak_session
 from universal_options_resolver import UniversalOptionsChainResolver
 from hf_dataset_uploader import convert_and_upload_file
-from trading_calendar import get_market_status
+from trading_calendar import get_market_status, get_ist_now
 
 ASSET_DIR_MAP = {
     "NIFTY": "nifty",
@@ -200,15 +200,15 @@ class UniversalRecorder:
         return {a_dir: self.get_asset_file_paths(a_dir, date_str) for a_dir in PRIMARY_ASSETS}
 
     def run(self):
-        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_date = get_ist_now().strftime("%Y-%m-%d")
         asset_paths = self.get_all_file_paths(current_date)
-        last_flush_minute = datetime.now().strftime("%Y-%m-%d %H:%M")
+        last_flush_minute = get_ist_now().strftime("%Y-%m-%d %H:%M")
 
-        print(f"[*] Recording loop started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"[*] Recording loop started at {get_ist_now().strftime('%Y-%m-%d %H:%M:%S')} (IST)")
 
         while self.running:
             t_cycle_start = time.perf_counter()
-            now = datetime.now()
+            now = get_ist_now()
             now_str = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
             minute_str = now.strftime("%Y-%m-%d %H:%M:00")
             today_str = now.strftime("%Y-%m-%d")
@@ -370,7 +370,7 @@ class UniversalRecorder:
 
     def flush_all_pending_bars(self):
         """Flushes all unwritten minute bars to disk upon shutdown."""
-        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_date = get_ist_now().strftime("%Y-%m-%d")
         asset_paths = self.get_all_file_paths(current_date)
         asset_bar_rows = {a: [] for a in PRIMARY_ASSETS}
 
