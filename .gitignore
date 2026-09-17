@@ -1,4 +1,10 @@
-# Ignore huge raw CSV tick files (upload compressed Parquet to Hugging Face or use Git LFS)
+# Ignore huge raw CSV tick files (upload compressed Parquet to Hugging Face)
+data/**/*ticks*.csv
 data/**/*Ticks*.csv
 *.parquet
 __pycache__/
+*.log
+engine/today_*.csv
+engine/shared_session.json
+engine/kotak_config.json
+
