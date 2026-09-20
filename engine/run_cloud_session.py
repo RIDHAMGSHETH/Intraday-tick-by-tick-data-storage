@@ -6,14 +6,17 @@ Executes a target market recording session:
 - Checks 2026 holiday calendar & weekend status
 - Initializes UniversalRecorder with automatic TOTP login
 - Records continuous 5-depth ticks, tape, and 1-min bars
-- On completion: converts CSVs to Parquet & uploads to Hugging Face
+- Gracefully stops at market close (15:32 IST for NSE, 23:32 IST for MCX)
+- Safely handles SIGTERM/SIGINT signals
+- Converts CSVs to Parquet & uploads to Hugging Face
 ===============================================================================
 """
 
 import os
 import sys
+import signal
 import argparse
-from datetime import datetime
+from datetime import datetime, time as dtime
 
 ENGINE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(ENGINE_DIR, ".."))
@@ -26,7 +29,7 @@ from trading_calendar import get_market_status, get_ist_now
 from universal_recorder import UniversalRecorder, PRIMARY_ASSETS
 from hf_dataset_uploader import convert_and_upload_file
 
-def run_session(session_type="morning", max_minutes=370):
+def run_session(session_type="morning", max_minutes=345):
     now = get_ist_now()
     status = get_market_status(now)
     date_str = now.strftime("%Y-%m-%d")
@@ -41,18 +44,37 @@ def run_session(session_type="morning", max_minutes=370):
 
     if session_type == "morning":
         if not status["nse_open"] and not status["mcx_open"]:
-            # Check if holiday today
             if "NSE Closed" in status["reason"] and "MCX Morning Closed" in status["reason"]:
                 print(f"[!] Morning market is closed: {status['reason']}. Skipping morning session.")
                 return 0
+        stop_time = dtime(15, 32)
     elif session_type == "evening":
         if not status["mcx_open"]:
             print(f"[!] MCX is not currently open ({status['reason']}). Exiting cleanly.")
             return 0
+        stop_time = dtime(23, 32)
+    else:
+        stop_time = None
 
-    print(f"\n[+] Launching {session_type.upper()} recorder session (Max: {max_minutes} min)...")
-    recorder = UniversalRecorder(poll_interval=0.20, option_radius=6, max_runtime_minutes=max_minutes)
-    
+    print(f"\n[+] Launching {session_type.upper()} recorder session (Max: {max_minutes} min, Target Stop: {stop_time})...")
+    recorder = UniversalRecorder(
+        poll_interval=0.20,
+        option_radius=6,
+        max_runtime_minutes=max_minutes,
+        stop_time_ist=stop_time
+    )
+
+    def sig_handler(sig, frame):
+        print(f"\n[!] Signal {sig} received. Initiating graceful shutdown...")
+        recorder.running = False
+
+    try:
+        signal.signal(signal.SIGINT, sig_handler)
+        if hasattr(signal, "SIGTERM"):
+            signal.signal(signal.SIGTERM, sig_handler)
+    except Exception as e:
+        print(f"[-] Signal binding note: {e}")
+
     try:
         recorder.initialize()
         recorder.run()
@@ -87,7 +109,7 @@ def run_session(session_type="morning", max_minutes=370):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Autonomous Market Session Runner")
     parser.add_argument("--session", choices=["morning", "evening"], default="morning", help="Market session")
-    parser.add_argument("--max-minutes", type=int, default=370, help="Max execution runtime in minutes")
+    parser.add_argument("--max-minutes", type=int, default=345, help="Max execution runtime in minutes")
     args = parser.parse_args()
 
     sys.exit(run_session(args.session, args.max_minutes))

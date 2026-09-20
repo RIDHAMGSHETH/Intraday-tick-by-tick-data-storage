@@ -50,10 +50,11 @@ ASSET_DIR_MAP = {
 PRIMARY_ASSETS = ["nifty", "sensex", "crudeoil", "naturalgas"]
 
 class UniversalRecorder:
-    def __init__(self, poll_interval=0.20, option_radius=6, max_runtime_minutes=None):
+    def __init__(self, poll_interval=0.20, option_radius=6, max_runtime_minutes=None, stop_time_ist=None):
         self.poll_interval = poll_interval
         self.option_radius = option_radius
         self.max_runtime_minutes = max_runtime_minutes
+        self.stop_time_ist = stop_time_ist
         self.client = None
         self.resolver = None
         self.running = True
@@ -212,6 +213,12 @@ class UniversalRecorder:
             now_str = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
             minute_str = now.strftime("%Y-%m-%d %H:%M:00")
             today_str = now.strftime("%Y-%m-%d")
+
+            # Check target session stop time in IST (e.g. 15:32 IST for NSE or 23:32 IST for MCX)
+            if self.stop_time_ist:
+                if now.time() >= self.stop_time_ist:
+                    print(f"\n[*] Target market session end time reached ({now.strftime('%H:%M:%S')} IST). Gracefully stopping recorder...")
+                    break
 
             # Check max runtime limit (e.g. for GitHub Actions)
             if self.max_runtime_minutes:
