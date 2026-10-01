@@ -77,25 +77,29 @@ class UniversalRecorder:
         self.client = get_kotak_session()
         self.resolver = UniversalOptionsChainResolver()
 
-        # Step 1: Probe underlying prices
+        # Step 1: Probe underlying prices dynamically
         print("[*] Probing underlying market prices for ATM discovery...")
-        probe_requests = [
-            {"instrument_token": "Nifty 50", "exchange_segment": "nse_cm"},
-            {"instrument_token": "SENSEX", "exchange_segment": "bse_cm"},
-            {"instrument_token": "565899", "exchange_segment": "mcx_fo"},
-            {"instrument_token": "565900", "exchange_segment": "mcx_fo"},
-            {"instrument_token": "568245", "exchange_segment": "mcx_fo"},
-            {"instrument_token": "568246", "exchange_segment": "mcx_fo"},
-        ]
-
         probe_prices = {
             "NIFTY": 23400.0,
             "SENSEX": 74500.0,
-            "CRUDEOIL": 9650.0,
-            "CRUDEOILM": 9650.0,
+            "CRUDEOIL": 8800.0,
+            "CRUDEOILM": 8800.0,
             "NATURALGAS": 280.0,
             "NATGASMINI": 280.0
         }
+
+        probe_requests = [
+            {"instrument_token": "Nifty 50", "exchange_segment": "nse_cm"},
+            {"instrument_token": "SENSEX", "exchange_segment": "bse_cm"},
+        ]
+        
+        # Dynamically query active near-month futures from resolver scrip master
+        for a_key in ["CRUDEOIL", "CRUDEOILM", "NATURALGAS", "NATGASMINI"]:
+            try:
+                f_info = self.resolver.resolve_asset_options(a_key, reference_price=probe_prices[a_key], radius=1)["future"]
+                probe_requests.append({"instrument_token": str(f_info["token"]), "exchange_segment": "mcx_fo"})
+            except Exception:
+                pass
 
         try:
             quotes = self.client.quotes(instrument_tokens=probe_requests)
