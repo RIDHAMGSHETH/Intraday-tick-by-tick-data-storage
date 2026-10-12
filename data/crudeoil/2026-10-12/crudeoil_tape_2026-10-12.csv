@@ -1,0 +1,2 @@
+timestamp,asset,instrument_type,strike,trading_symbol,traded_price,traded_qty,aggressor_side,cumulative_vol,open_interest
+2026-10-12 10:49:04.807,CRUDEOILM,CE,9500.0,CRUDEOILM15OCT269500CE,22.8,10,BUY_AGGRESSOR,193370,218310
