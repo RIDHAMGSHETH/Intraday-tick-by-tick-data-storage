@@ -1,0 +1,2 @@
+timestamp,asset,instrument_type,strike,trading_symbol,traded_price,traded_qty,aggressor_side,cumulative_vol,open_interest
+2026-11-25 10:06:21.607,CRUDEOILM,FUT,0.0,CRUDEOILM18DEC26FUT,7507.0,20,BUY_AGGRESSOR,54160,204530
